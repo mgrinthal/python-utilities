@@ -3,17 +3,13 @@
 import sys
 import smtplib
 import getpass
-# import argparse
+import ConfigParser
 
-# parser = argparse.ArgumentParser(description='Send an email.')
-# parser.add_argument('subject', metavar='subj', type=str, help='Email subject line')
-# parser.add_argument('body', metavar='body', nargs='+', type=str, help='Email body')
-# args = parser.parse_args()
+configParser = ConfigParser.RawConfigParser()
+configPath = './email-config.txt'
+configParser.read(configPath)
 
-# args.body = ' '.join(args.body);
-
-# print args.subject
-# print args.body
+emailAddress = configParser.get('email-config', 'address')
 
 def send(subject, body):
   if not subject and not body:
@@ -28,13 +24,13 @@ def send(subject, body):
     smtpObj.starttls()
     password = getpass.getpass(prompt='Email account password: ')
     try:
-      loginRes = smtpObj.login('mgrinthal2@gmail.com', password)
+      loginRes = smtpObj.login(emailAddress, password)
     except smtplib.SMTPException as err:
       print 'Error occured: ' + str(err[0]) + ' ' + str(err[1])
       smtpObj.quit()
       sys.exit()
     
-    emailRes = smtpObj.sendmail('mgrinthal2@gmail.com', 'mgrinthal2@gmail.com',
+    emailRes = smtpObj.sendmail(emailAddress, emailAddress,
                                 'Subject: ' + str(subject) + '\n' + str(body))
 
     if emailRes:

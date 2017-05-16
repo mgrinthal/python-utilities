@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-import sys, smtplib, getpass, ConfigParser
+import sys, smtplib, getpass, configparser
 
-configParser = ConfigParser.RawConfigParser()
+configParser = configparser.RawConfigParser()
 configPath = './email-config.txt'
 configParser.read(configPath)
 
@@ -10,7 +10,7 @@ emailAddress = configParser.get('email-config', 'address')
 
 def send(subject, body):
   if not subject and not body:
-    print 'Error: Email message must have a subject line or body'
+    print('Error: Email message must have a subject line or body')
     sys.exit()
 
   smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
@@ -23,7 +23,7 @@ def send(subject, body):
     try:
       loginRes = smtpObj.login(emailAddress, password)
     except smtplib.SMTPException as err:
-      print 'Error occured: ' + str(err[0]) + ' ' + str(err[1])
+      print('Error occured: ' + str(err[0]) + ' ' + str(err[1]))
       smtpObj.quit()
       sys.exit()
     
@@ -31,9 +31,9 @@ def send(subject, body):
                                 'Subject: ' + str(subject) + '\n' + str(body))
 
     if emailRes:
-      print 'Mail delivery failed'
+      print('Mail delivery failed')
 
     smtpObj.quit()
   else:
-    print 'Error connecting to SMTP server'
-    print connectionRes
+    print('Error connecting to SMTP server')
+    print(connectionRes)

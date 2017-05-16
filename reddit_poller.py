@@ -1,6 +1,6 @@
-import email_lib, requests, requests.auth, ConfigParser
+import email_lib, requests, requests.auth, configparser
 
-configParser = ConfigParser.RawConfigParser()
+configParser = configparser.RawConfigParser()
 configPath = './reddit-config.txt'
 configParser.read(configPath)
 

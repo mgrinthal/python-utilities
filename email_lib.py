@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-import sys
-import smtplib
-import getpass
-import ConfigParser
+import sys, smtplib, getpass, ConfigParser
 
 configParser = ConfigParser.RawConfigParser()
 configPath = './email-config.txt'

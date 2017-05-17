@@ -2,11 +2,15 @@
 
 import sys, smtplib, getpass, configparser
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 configParser = configparser.RawConfigParser()
 configPath = './email-config.txt'
 configParser.read(configPath)
 
 emailAddress = configParser.get('email-config', 'address')
+password = configParser.get('email-config', 'password')
 
 def send(subject, body):
   if not subject and not body:
@@ -19,7 +23,6 @@ def send(subject, body):
   if connectionRes[0] == 250:
     # Successful connection, enable encryption
     smtpObj.starttls()
-    password = getpass.getpass(prompt='Email account password: ')
     try:
       loginRes = smtpObj.login(emailAddress, password)
     except smtplib.SMTPException as err:
@@ -27,8 +30,18 @@ def send(subject, body):
       smtpObj.quit()
       sys.exit()
     
-    emailRes = smtpObj.sendmail(emailAddress, emailAddress,
-                                'Subject: ' + str(subject) + '\n' + str(body))
+    # emailRes = smtpObj.sendmail(emailAddress, emailAddress,
+    #                             'Subject: ' + str(subject) + '\n' + str(body))
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = emailAddress
+    msg['To'] = emailAddress
+
+    body = MIMEText(body, 'html')
+    msg.attach(body)
+
+    emailRes = smtpObj.sendmail(emailAddress, emailAddress, msg.as_string())
 
     if emailRes:
       print('Mail delivery failed')

@@ -20,7 +20,7 @@ while True:
 
   now = datetime.now()
   start_time = now.replace(hour=8, minute=0, second=0)
-  end_time = now.replace(hour=21, minute=0, second=0)
+  end_time = now.replace(hour=22, minute=0, second=0)
 
   # Only run between the hours of 8am and 10pm
   if start_time <= now <= end_time or override_time_restriction:
@@ -49,6 +49,7 @@ while True:
         elif any(word in submission.title.lower() for word in keywords):
           keyword_posts.append(submission)
 
+    message_body = ''
     if keyword_posts:
       message_body = '<b>Keyword Matches:</b><br/><br/>'
       for post in keyword_posts:

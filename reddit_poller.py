@@ -1,5 +1,6 @@
 import email_lib, configparser, praw, time, sys
 from datetime import datetime
+from datetime import timedelta
 
 configParser = configparser.RawConfigParser()
 configPath = './reddit-config.txt'
@@ -16,15 +17,20 @@ if len(sys.argv) >= 2:
 else:
   override_time_restriction = False
 
+# Provide start and end times in hour minute second format
+start_config = [8, 0, 0]
+end_config = [22, 0, 0]
+
 while True:
 
-  now = datetime.now()
-  start_time = now.replace(hour=8, minute=0, second=0)
-  end_time = now.replace(hour=22, minute=0, second=0)
+  sleep_time = 1800
 
-  # Only run between the hours of 8am and 10pm
+  now = datetime.now()
+  start_time = now.replace(hour=start_config[0], minute=start_config[1], second=start_config[2])
+  end_time = now.replace(hour=end_config[0], minute=end_config[1], second=end_config[2])
+
+  # Only run between the hours specified
   if start_time <= now <= end_time or override_time_restriction:
-    print('running')
     # TODO: Use timestamp to delete used_posts after 24 hours
     timestamp = time.time()
     reddit = praw.Reddit(client_id=configParser.get('reddit-config', 'client-id'),
@@ -66,5 +72,12 @@ while True:
     if keyword_posts or top_posts:
       email_lib.send('FMF Digest', message_body)
 
+  if start_time > now: # Same day, sleep until given start time
+    sleep_time = (start_time - now).total_seconds() + 30
+  elif end_time < now: # Late-night, sleep until given start time next day
+    start_time = start_time + timedelta(days=1)
+    sleep_time = (start_time - now).total_seconds() + 30
+
+  print('Successful iteration. Sleeping for ' + str(int(sleep_time / 60)) + ' minutes.')
   # Run every half an hour
-  time.sleep(1800)
+  time.sleep(sleep_time)

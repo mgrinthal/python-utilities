@@ -9,7 +9,7 @@ configParser.read(configPath)
 username = configParser.get('reddit-config', 'username')
 ua_string = 'RedditPoller/0.1 by' + username
 
-keywords = ['red wing', 'land\'s end', 'j.crew', 'j crew', 'j. crew', 'banana republic', 'bonobos', 'frank and oak', 'frank+oak', 'frank & oak', 'tall', 'allen edmonds']
+keywords = ['red wing', 'land\'s end', 'j.crew', 'j crew', 'j. crew', 'jcrew', 'banana republic', 'bonobos', 'frank and oak', 'frank+oak', 'frank + oak', 'frank & oak', 'tall', 'allen edmonds']
 used_posts = []
 
 if len(sys.argv) >= 2:
@@ -28,6 +28,10 @@ while True:
   now = datetime.now()
   start_time = now.replace(hour=start_config[0], minute=start_config[1], second=start_config[2])
   end_time = now.replace(hour=end_config[0], minute=end_config[1], second=end_config[2])
+
+  if start_time > end_time:
+    print('Invalid scheduling window. Check start and end times.')
+    break
 
   # Only run between the hours specified
   if start_time <= now <= end_time or override_time_restriction:

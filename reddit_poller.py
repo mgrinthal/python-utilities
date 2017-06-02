@@ -74,7 +74,7 @@ while True:
 
     # Only send an email if there are new posts
     if keyword_posts or top_posts:
-      email_lib.send('FMF Digest', message_body)
+      email_lib.send('FMF Digest', message_body.encode("utf8"))
 
   if start_time > now: # Same day, sleep until given start time
     sleep_time = (start_time - now).total_seconds() + 30
